@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delete Student | CampusDesk</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">🏫 CampusDesk <small>School Student Management</small></div>
+    <nav>
+      <a href="index.html" data-page="index.html">Home</a>
+      <a href="list.html" data-page="list.html">All Students</a>
+      <a href="listOne.html" data-page="listOne.html">Search</a>
+      <a href="insert.html" data-page="insert.html">Add Student</a>
+      <a href="update.html" data-page="update.html">Update</a>
+      <a href="delete.html" data-page="delete.html">Delete</a>
+    </nav>
+  </div>
+</header>
+<main class="container">
+  <section class="hero" style="background-image: url('https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=1600&q=85');">
+    <div class="hero-content">
+      <div class="eyebrow">DATABASE ADMINISTRATION</div>
+      <h1>Remove a student carefully.</h1>
+      <p>Delete a record by student number, with a confirmation step to prevent mistakes.</p>
+    </div>
+  </section>
+  <section class="panel">
+  <h2>Delete a student record</h2>
+  <p class="muted">Deleting a record cannot be automatically undone. Confirm the student number before continuing.</p>
+  <form id="deleteForm" class="form-grid">
+    <div class="field"><label for="student_id">Student number to delete</label><input id="student_id" type="number" min="1" required placeholder="e.g. 103"></div>
+    <div class="field" style="align-self:end"><button class="danger" type="submit">Delete student</button></div>
+  </form>
+  <div id="status" class="status"></div>
+</section>
+<script>
+document.getElementById("deleteForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const id = document.getElementById("student_id").value;
+  if (!confirm("Are you sure you want to permanently delete student number " + id + "?")) return;
+  const status = document.getElementById("status");
+  try {
+    const response = await fetch("/students/" + encodeURIComponent(id), { method: "DELETE" });
+    const message = await response.text();
+    if (!response.ok) throw new Error(message);
+    status.className = "status show success"; status.textContent = message;
+    event.target.reset();
+  } catch (error) {
+    status.className = "status show error"; status.textContent = error.message;
+  }
+});
+</script>
+</main>
+<footer class="footer">CampusDesk · Student records made simple</footer>
+<script>
+document.querySelectorAll('nav a').forEach(link => {
+  if (link.dataset.page === "delete.html") link.classList.add("active");
+});
+</script>
+</body>
+</html>

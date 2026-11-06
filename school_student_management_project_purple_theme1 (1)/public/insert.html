@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Student | CampusDesk</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">🏫 CampusDesk <small>School Student Management</small></div>
+    <nav>
+      <a href="index.html" data-page="index.html">Home</a>
+      <a href="list.html" data-page="list.html">All Students</a>
+      <a href="listOne.html" data-page="listOne.html">Search</a>
+      <a href="insert.html" data-page="insert.html">Add Student</a>
+      <a href="update.html" data-page="update.html">Update</a>
+      <a href="delete.html" data-page="delete.html">Delete</a>
+    </nav>
+  </div>
+</header>
+<main class="container">
+  <section class="hero" style="background-image: url('https://images.unsplash.com/photo-1503454537195-1dc57b135b2b?auto=format&fit=crop&w=1600&q=85');">
+    <div class="hero-content">
+      <div class="eyebrow">STUDENT RECORDS</div>
+      <h1>Add a new student.</h1>
+      <p>Create a student record and save it directly to your school database.</p>
+    </div>
+  </section>
+  <section class="panel">
+  <h2>Add a student record</h2>
+  <p class="muted">Fill in all fields. The student number must be unique.</p>
+  <form id="studentForm" class="form-grid">
+    <div class="field"><label for="student_id">Student number</label><input id="student_id" type="number" min="1" required placeholder="e.g. 104"></div>
+    <div class="field"><label for="student_name">Student name</label><input id="student_name" type="text" maxlength="100" required placeholder="Full name"></div>
+    <div class="field"><label for="total">Total marks</label><input id="total" type="number" min="0" max="1000" required placeholder="0–1000"></div>
+    <div class="field full"><div class="button-row"><button class="primary" type="submit">Save student</button><button class="secondary" type="reset">Clear form</button></div></div>
+  </form>
+  <div id="status" class="status"></div>
+</section>
+<script>
+document.getElementById("studentForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const status = document.getElementById("status");
+  const payload = {
+    student_id: document.getElementById("student_id").value,
+    student_name: document.getElementById("student_name").value.trim(),
+    total: document.getElementById("total").value
+  };
+  try {
+    const response = await fetch("/students", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
+    });
+    const message = await response.text();
+    if (!response.ok) throw new Error(message);
+    status.className = "status show success"; status.textContent = message;
+    event.target.reset();
+  } catch (error) {
+    status.className = "status show error"; status.textContent = error.message;
+  }
+});
+</script>
+</main>
+<footer class="footer">CampusDesk · Student records made simple</footer>
+<script>
+document.querySelectorAll('nav a').forEach(link => {
+  if (link.dataset.page === "insert.html") link.classList.add("active");
+});
+</script>
+</body>
+</html>
